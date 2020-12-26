@@ -50,7 +50,7 @@ const SongPlayer = () => {
       if (playStatus.isPlaying) {
         soundObject
           .stopAsync()
-          .then(() => soundObj.unloadAsync())
+          .then(() => soundObject.unloadAsync())
           .then(() => playSound(url));
       } else {
         playSound(url);
@@ -70,7 +70,7 @@ const SongPlayer = () => {
     if (suggestedSongs.length) {
       dispatch(getSongDetails(suggestedSongs[currentPlayIndex]));
     } else {
-      apiDispatch(getSuggestedSongsList(nowPlaying.videoId));
+      nowPlaying && apiDispatch(getSuggestedSongsList(nowPlaying.videoId));
     }
   }, [currentPlayIndex]);
 

@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Dimensions, StyleSheet, Text, View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
-import axios from "axios";
-import { apiUrl } from "../env";
 import SearchBar from "../components/SearchBar";
 import DisplaySongs from "../components/DisplaySongs";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,22 +8,18 @@ import {
   getSongsList,
   getSuggestedSongsList,
 } from "../redux/actions/searchActions";
-import DisplayAlbums from "../components/DisplayAlbums";
 import { getSongDetails } from "../redux/actions/songActions";
 
 const SearchScreen = ({ navigation }) => {
-  const [value, setValue] = useState("believer");
+  const [value, setValue] = useState("Believer");
   const dispatch = useDispatch();
   const { isLoading, songs } = useSelector((state) => state.searchReducer);
-  const nowPlaying = useSelector((state) => state.searchReducer.nowPlaying);
+  const nowPlaying = useSelector((state) => state.songReducer.nowPlaying);
   // console.log(songs);
   useEffect(() => {
     if (value) {
       dispatch(getSongsList(value));
     }
-    return () => {
-      setValue("");
-    };
   }, [value]);
 
   const handleClick = (song) => {
@@ -42,6 +36,16 @@ const SearchScreen = ({ navigation }) => {
         setValue={setValue}
         placeholder="Enter Song name"
       />
+
+      {!value && (
+        <View>
+          <Text>Search and select a song of your choice,</Text>
+          <Text>Sit back and relax.</Text>
+          <Text>
+            Songs will be played from a curated playlist of related songs!
+          </Text>
+        </View>
+      )}
 
       <View style={{ flex: 1 }}>
         {isLoading ? (

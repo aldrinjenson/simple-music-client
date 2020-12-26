@@ -1,15 +1,18 @@
 import React from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
+import { useSelector } from "react-redux";
 import SongItem from "./SongItem";
 
 const DisplaySongs = ({ songs, handleClick }) => {
+  const nowPlaying = useSelector((state) => state.songReducer.nowPlaying);
   if (!songs)
     return (
       <View
         style={{
           justifyContent: "center",
-          alignsongs: "center",
+          alignItems: "center",
           marginTop: 200,
+          paddingHorizontal: 20,
         }}
       >
         <Text>Sorry, No such Song exists in our database!!</Text>
@@ -31,6 +34,7 @@ const DisplaySongs = ({ songs, handleClick }) => {
                 item={item}
                 imageUrl={imageUrl}
                 handleClick={handleClick}
+                shouldHighLight={nowPlaying?.videoId === item.videoId}
               />
             </View>
           );

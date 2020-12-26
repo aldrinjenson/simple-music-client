@@ -73,7 +73,7 @@ const NowPlaying = ({ navigation }) => {
       if (soundObject) {
         soundObject.getStatusAsync().then((status) => {
           const { positionMillis } = status;
-          setSliderValue(positionMillis / nowPlaying.duration);
+          setSliderValue(positionMillis / status.durationMillis);
           setDuration(milliToTime(positionMillis));
         });
       }

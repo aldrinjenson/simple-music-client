@@ -17,7 +17,7 @@ const UpNext = ({ navigation }) => {
     navigation.navigate("NowPlaying");
   };
   return (
-    <View style={{ flex: 1, alignItems: "center" }}>
+    <View style={{ flex: 1 }}>
       {isSuggestedSongsLoading ? (
         <View style={{ alignItems: "center" }}>
           <ActivityIndicator

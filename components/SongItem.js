@@ -2,10 +2,15 @@ import React from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
 import { globalStyles } from "../global/globalStyles";
 
-const SongItem = ({ handleClick, item, imageUrl }) => {
+const SongItem = ({ handleClick, item, imageUrl, shouldHighLight }) => {
   return (
     <TouchableOpacity onPress={() => handleClick(item)}>
-      <View style={styles.horizonatalCard}>
+      <View
+        style={{
+          ...styles.horizonatalCard,
+          backgroundColor: shouldHighLight ? "grey" : "transparent",
+        }}
+      >
         <Image style={styles.bookImage} source={imageUrl} />
         <View style={styles.textContent}>
           <Text style={globalStyles.title}>{item.name}</Text>
