@@ -17,6 +17,7 @@ const SearchScreen = ({ navigation }) => {
   const [value, setValue] = useState("believer");
   const dispatch = useDispatch();
   const { isLoading, songs } = useSelector((state) => state.searchReducer);
+  const nowPlaying = useSelector((state) => state.searchReducer.nowPlaying);
   // console.log(songs);
   useEffect(() => {
     if (value) {
@@ -35,24 +36,28 @@ const SearchScreen = ({ navigation }) => {
   };
 
   return (
-    <View>
-      <Button
-        onPress={() => navigation.navigate("NowPlaying")}
-        title="Now Playing"
-      />
+    <View style={{ flex: 1 }}>
       <SearchBar
         value={value}
         setValue={setValue}
         placeholder="Enter Song name"
       />
 
-      {isLoading ? (
-        <View>
-          <ActivityIndicator size="large" color="0000ff" />
-          <Text style={{ alignSelf: "center" }}>Loading...</Text>
-        </View>
-      ) : (
-        <DisplaySongs songs={songs} handleClick={handleClick} />
+      <View style={{ flex: 1 }}>
+        {isLoading ? (
+          <View>
+            <ActivityIndicator size="large" color="0000ff" />
+            <Text style={{ alignSelf: "center" }}>Loading...</Text>
+          </View>
+        ) : (
+          <DisplaySongs songs={songs} handleClick={handleClick} />
+        )}
+      </View>
+      {nowPlaying && (
+        <Button
+          onPress={() => navigation.navigate("NowPlaying")}
+          title="Now Playing"
+        />
       )}
     </View>
   );

@@ -3,8 +3,6 @@ import { FlatList, StyleSheet, Text, View } from "react-native";
 import SongItem from "./SongItem";
 
 const DisplaySongs = ({ songs, handleClick }) => {
-  console.log(songs);
-  console.log("in display screen");
   if (!songs)
     return (
       <View
@@ -29,7 +27,6 @@ const DisplaySongs = ({ songs, handleClick }) => {
             : require("../assets/no_preview_image.png");
           return (
             <View>
-              <Text>Hello</Text>
               <SongItem
                 item={item}
                 imageUrl={imageUrl}

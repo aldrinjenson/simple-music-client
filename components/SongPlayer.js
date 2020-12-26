@@ -4,7 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { Audio } from "expo-av";
 import { apiDispatch } from "../global/utils";
 import { SET_IS_SONG_PLAYING, SET_SOUND_OBJECT } from "../redux/constants";
-import { getSongDetails } from "../redux/actions/songActions";
+import {
+  getSongDetails,
+  incrementPlayIndex,
+} from "../redux/actions/songActions";
+import { getSuggestedSongsList } from "../redux/actions/searchActions";
 
 Audio.setAudioModeAsync({ staysActiveInBackground: true });
 
@@ -15,8 +19,13 @@ const SongPlayer = () => {
     isSongPlaying,
     songUrl,
     isPaused,
+    currentPlayIndex,
     soundObject,
   } = useSelector((state) => state.songReducer);
+
+  const suggestedSongs = useSelector(
+    (state) => state.searchReducer.suggestedSongs
+  );
 
   const dispatch = useDispatch();
 
@@ -25,14 +34,27 @@ const SongPlayer = () => {
       uri,
     });
     await soundObj.playAsync();
+    soundObj.setOnPlaybackStatusUpdate(async (status) => {
+      if (status.didJustFinish) {
+        console.log("finished loading");
+        dispatch(incrementPlayIndex());
+      }
+    });
     dispatch(apiDispatch(SET_SOUND_OBJECT, soundObj));
     dispatch(apiDispatch(SET_IS_SONG_PLAYING, true));
   };
 
-  const playSong = (url) => {
-    if (isSongPlaying) {
-      soundObject.stopAsync().then(() => playSound(url));
-      dispatch(apiDispatch(SET_IS_SONG_PLAYING, false));
+  const playSong = async (url) => {
+    if (soundObject) {
+      const playStatus = await soundObject.getStatusAsync();
+      if (playStatus.isPlaying) {
+        soundObject
+          .stopAsync()
+          .then(() => soundObj.unloadAsync())
+          .then(() => playSound(url));
+      } else {
+        playSound(url);
+      }
     } else {
       playSound(url);
     }
@@ -44,7 +66,15 @@ const SongPlayer = () => {
     }
   }, [isUrlLoading, songUrl]);
 
-  return <View>{/* <Button title="button" onPress={handleStop} /> */}</View>;
+  useEffect(() => {
+    if (suggestedSongs.length) {
+      dispatch(getSongDetails(suggestedSongs[currentPlayIndex]));
+    } else {
+      apiDispatch(getSuggestedSongsList(nowPlaying.videoId));
+    }
+  }, [currentPlayIndex]);
+
+  return <View></View>;
 };
 
 export default SongPlayer;

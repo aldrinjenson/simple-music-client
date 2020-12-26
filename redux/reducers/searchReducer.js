@@ -17,12 +17,11 @@ const initialState = {
   playList: [],
 };
 
-const searchReducer = (state = initialState, { type, payload }) => {
+const searchReducer = (state = initialState, { type, payload = null }) => {
   switch (type) {
     case GET_SONGS_LIST:
       return { ...state, songs: [], isLoading: true };
     case GET_SONGS_LIST_SUCCESS:
-      console.log(payload);
       return { ...state, isLoading: false, songs: payload };
 
     case GET_ALBUM_LIST_SUCCESS:

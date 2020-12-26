@@ -3,12 +3,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialIcons } from "@expo/vector-icons";
 import SearchScreen from "../Screens/SearchScreen";
 import HomeScreen from "../Screens/HomeScreen";
-import { useDispatch, useSelector } from "react-redux";
-import { Audio } from "expo-av";
-import { apiDispatch } from "../global/utils";
-import { setSoundObj } from "../redux/actions/songActions";
 
-// Audio.setAudioModeAsync({ staysActiveInBackground: true });
 const Tab = createBottomTabNavigator();
 
 const HomeStack = () => {

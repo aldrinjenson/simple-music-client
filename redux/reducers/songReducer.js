@@ -1,6 +1,8 @@
 import {
+  DECREMENT_PLAY_INDEX,
   GET_SONGS_DETAILS,
   GET_SONGS_DETAILS_SUCCESS,
+  INCREMENT_PLAY_INDEX,
   SET_CURRENT_SONG,
   SET_IS_SONG_PLAYING,
   SET_SOUND_OBJECT,
@@ -16,9 +18,11 @@ const initialState = {
   isPaused: false,
   soundObject: null,
   isSongPlaying: false,
+  currentSongThumbnail: null,
+  currentPlayIndex: 0,
 };
 
-export default (state = initialState, { type, payload }) => {
+const songReducer = (state = initialState, { type, payload = null }) => {
   switch (type) {
     case GET_SONGS_DETAILS:
       return {
@@ -33,7 +37,8 @@ export default (state = initialState, { type, payload }) => {
         ...state,
         isUrlLoading: false,
         isPaused: false,
-        songUrl: payload,
+        songUrl: payload.url,
+        currentSongThumbnail: payload.thumbnail,
       };
     case TOGGLE_PAUSE: {
       return {
@@ -56,7 +61,19 @@ export default (state = initialState, { type, payload }) => {
         ...state,
         nowPlaying: payload,
       };
+    case INCREMENT_PLAY_INDEX:
+      return {
+        ...state,
+        currentPlayIndex: state.currentPlayIndex + 1,
+      };
+    case DECREMENT_PLAY_INDEX:
+      return {
+        ...state,
+        currentPlayIndex: state.currentPlayIndex - 1,
+      };
     default:
       return state;
   }
 };
+
+export default songReducer;

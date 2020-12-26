@@ -28,7 +28,6 @@ export const getSuggestedSongsList = (videoId) => {
     axios
       .get(`${apiUrl}/suggested?videoId=${videoId}`)
       .then((res) => {
-        console.log("RECIEVED SONGS = " + res.data);
         dispatch(
           apiDispatch(GET_SUGGESTED_SONGS_SUCCESS, convertSongFormat(res.data))
         );

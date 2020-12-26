@@ -17,6 +17,10 @@ import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
+import {
+  incrementPlayIndex,
+  decrementPlayIndex,
+} from "../redux/actions/songActions";
 
 const { height, width } = Dimensions.get("window");
 
@@ -27,14 +31,30 @@ const NowPlaying = ({ navigation }) => {
     isPaused,
     isSongPlaying,
     isUrlLoading,
+    currentSongThumbnail,
+    currentPlayIndex,
   } = useSelector((state) => state.songReducer);
-  const dispatch = useDispatch();
-  const [sliderValue, setSliderValue] = useState(0);
-  const [duration, setDuration] = useState("00:00");
 
-  let imageUrl = nowPlaying?.thumbnails
+  const suggestedSongs = useSelector(
+    (state) => state.songReducer.suggestedSongs
+  );
+
+  let imageUrl = nowPlaying.thumbnails
     ? { uri: `${nowPlaying.thumbnails[0].url}` }
     : require("../assets/no_preview_image.png");
+
+  const dispatch = useDispatch();
+  const [sliderValue, setSliderValue] = useState(0);
+  const [imgLink, setImgLink] = useState(imageUrl);
+  const [duration, setDuration] = useState("00:00");
+
+  useEffect(() => {
+    if (currentSongThumbnail) {
+      setImgLink({ uri: currentSongThumbnail });
+    } else {
+      setImgLink(imageUrl);
+    }
+  }, [currentSongThumbnail]);
 
   const handlePause = async () => {
     if (soundObject) {
@@ -48,21 +68,30 @@ const NowPlaying = ({ navigation }) => {
   };
 
   useEffect(() => {
+    console.log("in useeffect");
     const sliderInterval = setInterval(() => {
       if (soundObject) {
         soundObject.getStatusAsync().then((status) => {
-          setSliderValue(status.positionMillis / nowPlaying.duration);
-          setDuration(milliToTime(status.positionMillis));
+          const { positionMillis } = status;
+          setSliderValue(positionMillis / nowPlaying.duration);
+          setDuration(milliToTime(positionMillis));
         });
       }
     }, 500);
     return () => {
       clearInterval(sliderInterval);
     };
-  }, [isSongPlaying]);
+  }, [soundObject]);
 
-  const handlePrevious = () => {};
-  const handleNext = () => {};
+  const handleNext = () => {
+    // if (currentPlayIndex < suggestedSongs?.length)
+    dispatch(incrementPlayIndex());
+  };
+  const handlePrevious = () => {
+    if (currentPlayIndex > 1) {
+      dispatch(decrementPlayIndex());
+    }
+  };
 
   const handleSliderChange = async (ratio) => {
     if (soundObject) {
@@ -81,10 +110,9 @@ const NowPlaying = ({ navigation }) => {
           alignItems: "center",
           justifyContent: "center",
           marginVertical: 70,
-          // backgroundColor: "pink",
         }}
       >
-        <Image style={styles.thumbnail} source={imageUrl} />
+        <Image style={styles.thumbnail} source={imgLink} />
       </View>
       <Text style={styles.title}>{nowPlaying?.name}</Text>
       <Text style={styles.artist}>{nowPlaying?.artist.name}</Text>
@@ -115,9 +143,13 @@ const NowPlaying = ({ navigation }) => {
         </TouchableOpacity>
 
         <View style={{ flexDirection: "row" }}>
-          <TouchableOpacity onPress={() => handlePrevious()}>
-            <MaterialIcons name="skip-previous" size={70} color="grey" />
-          </TouchableOpacity>
+          <MaterialIcons
+            name="skip-previous"
+            onPress={() => handlePrevious()}
+            size={70}
+            color="grey"
+            borderRadius={currentPlayIndex !== 0}
+          />
           <TouchableOpacity onPress={() => handlePause()}>
             <MaterialIcons
               style={styles.pauseButton}
@@ -129,16 +161,24 @@ const NowPlaying = ({ navigation }) => {
             />
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => handleNext()}>
-            <MaterialIcons name="skip-next" size={70} color="grey" />
-          </TouchableOpacity>
+          <MaterialIcons
+            onPress={() => handleNext()}
+            name="skip-next"
+            size={70}
+            color="grey"
+          />
         </View>
 
-        <TouchableOpacity onPress={() => handleNext()}>
+        <TouchableOpacity onPress={() => {}}>
           <AntDesign name={"hearto" || "heart"} size={30} color="black" />
         </TouchableOpacity>
       </View>
       <Button title="Up Next" onPress={() => navigation.navigate("UpNext")} />
+      {isUrlLoading && (
+        <Text style={{ textAlign: "center", fontSize: 14, marginTop: 10 }}>
+          Bufferring Song...
+        </Text>
+      )}
     </View>
   );
 };
@@ -176,6 +216,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     flexDirection: "row",
     alignItems: "center",
+    marginBottom: 15,
   },
   fab: {},
 });

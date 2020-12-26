@@ -17,11 +17,18 @@ const UpNext = ({ navigation }) => {
     navigation.navigate("NowPlaying");
   };
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, alignItems: "center" }}>
       {isSuggestedSongsLoading ? (
-        <View>
-          <ActivityIndicator size="large" color="0000ff" />
-          <Text style={{ alignSelf: "center" }}>Loading...</Text>
+        <View style={{ alignItems: "center" }}>
+          <ActivityIndicator
+            style={{ marginTop: 30, marginBottom: 10 }}
+            size="large"
+            color="0000ff"
+          />
+          <Text style={{}}>Loading...</Text>
+          <Text style={{ marginTop: 30 }}>
+            Sit back and relax, fetching recommended songs
+          </Text>
         </View>
       ) : (
         <DisplaySongs songs={suggestedSongs} handleClick={handleClick} />

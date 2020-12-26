@@ -5,7 +5,6 @@ import { globalStyles } from "../global/globalStyles";
 const SongItem = ({ handleClick, item, imageUrl }) => {
   return (
     <TouchableOpacity onPress={() => handleClick(item)}>
-      <Text>{JSON.stringify(item)}</Text>
       <View style={styles.horizonatalCard}>
         <Image style={styles.bookImage} source={imageUrl} />
         <View style={styles.textContent}>
