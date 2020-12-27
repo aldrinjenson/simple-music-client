@@ -11,8 +11,6 @@ import {
 
 const initialState = {
   nowPlaying: null,
-  queue: [],
-  quality: "medium",
   isUrlLoading: false,
   songUrl: null,
   isPaused: false,

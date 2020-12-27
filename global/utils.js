@@ -15,7 +15,7 @@ export const convertSongFormat = (songs) => {
       name: song.title,
       // thumbnails: [song.thumbnails[song.thumbnails.length - 1]],
       thumbnails: song.thumbnails,
-      artist: { name: song.author.name },
+      artist: { name: song.author?.name.slice(0, -7) },
       duration: +song.lengthSeconds * 1000,
       videoId: song.videoId,
     };

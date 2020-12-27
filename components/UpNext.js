@@ -14,7 +14,7 @@ const UpNext = ({ navigation }) => {
 
   const handleClick = (song) => {
     dispatch(getSongDetails(song));
-    navigation.navigate("NowPlaying");
+    navigation.pop();
   };
   return (
     <View style={{ flex: 1 }}>

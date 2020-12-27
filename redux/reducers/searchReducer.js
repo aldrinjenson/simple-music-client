@@ -8,28 +8,20 @@ import {
 } from "../constants";
 
 const initialState = {
-  songs: [],
+  searchResults: [],
   albums: [],
   isLoading: false,
   error: null,
   isSuggestedSongsLoading: false,
   suggestedSongs: [],
-  playList: [],
 };
 
 const searchReducer = (state = initialState, { type, payload = null }) => {
   switch (type) {
     case GET_SONGS_LIST:
-      return { ...state, songs: [], isLoading: true };
+      return { ...state, searchResults: [], isLoading: true };
     case GET_SONGS_LIST_SUCCESS:
-      return { ...state, isLoading: false, songs: payload };
-
-    case GET_ALBUM_LIST_SUCCESS:
-      return {
-        ...state,
-        albums: payload,
-      };
-
+      return { ...state, isLoading: false, searchResults: payload };
     case GET_SUGGESTED_SONGS:
       return {
         ...state,
@@ -43,10 +35,10 @@ const searchReducer = (state = initialState, { type, payload = null }) => {
         playlist: payload,
         isSuggestedSongsLoading: false,
       };
-
     case GET_DATA_ERROR:
       console.error({ payload });
-      return { ...state, songs: [], isLoading: false, error: payload };
+      return { ...state, searchResults: [], isLoading: false, error: payload };
+
     default:
       return state;
   }

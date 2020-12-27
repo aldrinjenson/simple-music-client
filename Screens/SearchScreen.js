@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Dimensions, StyleSheet, Text, View } from "react-native";
+import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import SearchBar from "../components/SearchBar";
 import DisplaySongs from "../components/DisplaySongs";
@@ -9,13 +9,17 @@ import {
   getSuggestedSongsList,
 } from "../redux/actions/searchActions";
 import { getSongDetails } from "../redux/actions/songActions";
+import BottomBar from "../components/BottomBar";
 
 const SearchScreen = ({ navigation }) => {
-  const [value, setValue] = useState("Believer");
-  const dispatch = useDispatch();
-  const { isLoading, songs } = useSelector((state) => state.searchReducer);
+  const [value, setValue] = useState("Believe");
+  const isLoading = useSelector((state) => state.searchReducer.isLoading);
+  const searchResults = useSelector(
+    (state) => state.searchReducer.searchResults
+  );
   const nowPlaying = useSelector((state) => state.songReducer.nowPlaying);
-  // console.log(songs);
+  const dispatch = useDispatch();
+
   useEffect(() => {
     if (value) {
       dispatch(getSongsList(value));
@@ -54,15 +58,10 @@ const SearchScreen = ({ navigation }) => {
             <Text style={{ alignSelf: "center" }}>Loading...</Text>
           </View>
         ) : (
-          <DisplaySongs songs={songs} handleClick={handleClick} />
+          <DisplaySongs songs={searchResults} handleClick={handleClick} />
         )}
       </View>
-      {nowPlaying && (
-        <Button
-          onPress={() => navigation.navigate("NowPlaying")}
-          title="Now Playing"
-        />
-      )}
+      {nowPlaying && <BottomBar navigation={navigation} />}
     </View>
   );
 };

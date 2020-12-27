@@ -7,6 +7,7 @@ import {
   INCREMENT_PLAY_INDEX,
   SET_CURRENT_SONG,
   SET_SOUND_OBJECT,
+  TOGGLE_PAUSE,
 } from "../constants";
 
 export const getSongDetails = (song) => {
@@ -44,6 +45,13 @@ export const incrementPlayIndex = () => {
 export const decrementPlayIndex = () => {
   return {
     type: SET_CURRENT_SONG,
+    payload: null,
+  };
+};
+
+export const togglePause = () => {
+  return {
+    type: TOGGLE_PAUSE,
     payload: null,
   };
 };

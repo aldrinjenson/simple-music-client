@@ -1,18 +1,21 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { Provider as PaperProvider } from "react-native-paper";
-import { createStackNavigator } from "@react-navigation/stack";
-import { Provider, useDispatch, useSelector } from "react-redux";
+import {
+  createStackNavigator,
+  CardStyleInterpolators,
+} from "@react-navigation/stack";
+import { Provider } from "react-redux";
 import { applyMiddleware, createStore } from "redux";
 import rootReducer from "./redux/reducers/rootReducer";
 import thunk from "redux-thunk";
 
-import HomeStack from "./Stack/HomeStack";
 import Header from "./global/Header";
 import NowPlaying from "./Screens/NowPlaying";
-import { Dimensions, View, StyleSheet } from "react-native";
 import SongPlayer from "./components/SongPlayer";
 import UpNext from "./components/UpNext";
+import SearchScreen from "./Screens/SearchScreen";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const store = createStore(rootReducer, applyMiddleware(thunk));
 const Stack = createStackNavigator();
@@ -21,23 +24,31 @@ const App = () => {
   return (
     <Provider store={store}>
       <PaperProvider>
-        {/* <View style={styles.main}> */}
         <NavigationContainer>
-          {/* <HomeStack /> */}
           <Stack.Navigator initialRouteName="Play">
             <Stack.Screen
               name="Home"
-              component={HomeStack}
+              component={SearchScreen}
               options={({ navigation }) => ({
                 headerTitle: () => (
-                  <Header navigation={navigation} title="MusicMan" />
+                  <Header navigation={navigation} title="SimpleMusic" />
                 ),
               })}
             />
             <Stack.Screen
               name="NowPlaying"
               component={NowPlaying}
-              options={{ headerTitle: "Now Playing" }}
+              options={{
+                gestureEnabled: true,
+                // cardStyleInterpolator:CardStyleInterpolators.
+                headerBackImage: () => (
+                  <MaterialCommunityIcons
+                    name="chevron-down"
+                    size={40}
+                    color="black"
+                  />
+                ),
+              }}
             />
             <Stack.Screen
               name="UpNext"
@@ -46,17 +57,9 @@ const App = () => {
             />
           </Stack.Navigator>
         </NavigationContainer>
-        {/* </View> */}
         <SongPlayer />
       </PaperProvider>
     </Provider>
   );
 };
-
-const styles = StyleSheet.create({
-  main: {
-    height: Dimensions.get("window").height - 70,
-  },
-});
-
 export default App;

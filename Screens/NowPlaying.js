@@ -10,16 +10,14 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { apiDispatch, milliToTime } from "../global/utils";
-import { TOGGLE_PAUSE } from "../redux/constants";
+import { milliToTime } from "../global/utils";
 import { MaterialIcons } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
 import {
   incrementPlayIndex,
   decrementPlayIndex,
+  togglePause,
 } from "../redux/actions/songActions";
 
 const { height, width } = Dimensions.get("window");
@@ -35,11 +33,7 @@ const NowPlaying = ({ navigation }) => {
     currentPlayIndex,
   } = useSelector((state) => state.songReducer);
 
-  const suggestedSongs = useSelector(
-    (state) => state.songReducer.suggestedSongs
-  );
-
-  let imageUrl = nowPlaying.thumbnails
+  let imageUrl = nowPlaying?.thumbnails
     ? { uri: `${nowPlaying.thumbnails[0].url}` }
     : require("../assets/no_preview_image.png");
 
@@ -57,14 +51,7 @@ const NowPlaying = ({ navigation }) => {
   }, [currentSongThumbnail]);
 
   const handlePause = async () => {
-    if (soundObject) {
-      if (isPaused) {
-        await soundObject.playAsync();
-      } else {
-        await soundObject.pauseAsync();
-      }
-    }
-    dispatch(apiDispatch(TOGGLE_PAUSE));
+    dispatch(togglePause());
   };
 
   useEffect(() => {
@@ -103,82 +90,91 @@ const NowPlaying = ({ navigation }) => {
 
   return (
     <View
-      style={{ flex: 1, paddingHorizontal: 20, backgroundColor: "#2C2C2CAA" }}
+      style={{
+        flex: 1,
+        paddingHorizontal: 20,
+        backgroundColor: "#2C2C2CAA",
+        justifyContent: "space-evenly",
+      }}
     >
       <View
         style={{
           alignItems: "center",
-          justifyContent: "center",
           marginVertical: 70,
         }}
       >
         <Image style={styles.thumbnail} source={imgLink} />
-      </View>
-      <Text style={styles.title}>{nowPlaying?.name}</Text>
-      <Text style={styles.artist}>{nowPlaying?.artist.name}</Text>
-
-      <View style={{ position: "relative" }}>
-        <Slider
-          style={{ width: width - 40, height: 40 }}
-          minimumValue={0}
-          maximumValue={1}
-          minimumTrackTintColor="#FFFFFF"
-          maximumTrackTintColor="#000000"
-          value={sliderValue}
-          onValueChange={handleSliderChange}
-        />
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text style={{}}>{duration}</Text>
-          <Text style={{}}>{milliToTime(nowPlaying.duration)}</Text>
+        <View style={{ alignItems: "center", marginTop: 30 }}>
+          <Text style={styles.title}>{nowPlaying?.name}</Text>
+          <Text style={styles.artist}>{nowPlaying?.artist.name}</Text>
         </View>
       </View>
 
-      <View style={styles.controlButtons}>
-        <TouchableOpacity onPress={() => handlePrevious()}>
+      <View>
+        <View style={{ position: "relative" }}>
+          <Slider
+            style={{ width: width - 40, height: 40 }}
+            minimumValue={0}
+            maximumValue={1}
+            minimumTrackTintColor="#FFFFFF"
+            maximumTrackTintColor="#000000"
+            value={sliderValue}
+            onValueChange={handleSliderChange}
+          />
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <Text style={{}}>{duration}</Text>
+            <Text style={{}}>{milliToTime(nowPlaying.duration)}</Text>
+          </View>
+        </View>
+
+        <View style={styles.controlButtons}>
           <MaterialCommunityIcons
             name={"repeat" || "repeat-off" || "repeat-once"}
             size={30}
             color="black"
-          />
-        </TouchableOpacity>
-
-        <View style={{ flexDirection: "row" }}>
-          <MaterialIcons
-            name="skip-previous"
             onPress={() => handlePrevious()}
-            size={70}
-            color="grey"
-            borderRadius={currentPlayIndex !== 0}
           />
-          <TouchableOpacity onPress={() => handlePause()}>
+
+          <View style={{ flexDirection: "row" }}>
             <MaterialIcons
-              style={styles.pauseButton}
-              name={isPaused ? "play-circle-fill" : "pause-circle-filled"}
+              name="skip-previous"
+              onPress={() => handlePrevious()}
               size={70}
-              color={isUrlLoading ? "grey" : "green"}
-              onPress={handlePause}
-              style={styles.pauseButton}
+              color="grey"
+              borderRadius={currentPlayIndex !== 0}
             />
-          </TouchableOpacity>
+            <TouchableOpacity onPress={() => handlePause()}>
+              <MaterialIcons
+                name={isPaused ? "play-circle-fill" : "pause-circle-filled"}
+                size={70}
+                color={isUrlLoading ? "grey" : "green"}
+                onPress={handlePause}
+              />
+            </TouchableOpacity>
+
+            <MaterialIcons
+              onPress={() => handleNext()}
+              name="skip-next"
+              size={70}
+              color="grey"
+            />
+          </View>
 
           <MaterialIcons
-            onPress={() => handleNext()}
-            name="skip-next"
-            size={70}
-            color="grey"
+            name="queue-music"
+            size={30}
+            color="black"
+            onPress={() => navigation.navigate("UpNext")}
           />
         </View>
-
-        <TouchableOpacity onPress={() => {}}>
-          <AntDesign name={"hearto" || "heart"} size={30} color="black" />
-        </TouchableOpacity>
+        {isUrlLoading && (
+          <Text style={{ textAlign: "center", fontSize: 14, marginBottom: 10 }}>
+            Bufferring Song...
+          </Text>
+        )}
       </View>
-      <Button title="Up Next" onPress={() => navigation.navigate("UpNext")} />
-      {isUrlLoading && (
-        <Text style={{ textAlign: "center", fontSize: 14, marginTop: 10 }}>
-          Bufferring Song...
-        </Text>
-      )}
     </View>
   );
 };
@@ -191,26 +187,14 @@ const styles = StyleSheet.create({
     width: width * 0.75,
   },
   title: {
-    // fontWeight: "bold",
+    fontWeight: "400",
     fontSize: 20,
-    textAlign: "center",
-    marginVertical: 5,
   },
   artist: {
-    textAlign: "center",
     fontWeight: "200",
-    marginVertical: 5,
   },
   endTime: {
     position: "absolute",
-  },
-  pauseButton: {
-    // backgroundColor: "green",
-    // width: 50,
-    // height: 50,
-    // borderRadius: 50,
-    // justifyContent: "center",
-    // alignItems: "center",
   },
   controlButtons: {
     justifyContent: "space-between",

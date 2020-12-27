@@ -50,7 +50,7 @@ const SongPlayer = () => {
       if (playStatus.isPlaying) {
         soundObject
           .stopAsync()
-          .then(() => soundObject.unloadAsync())
+          // .then(() => soundObject.unloadAsync())
           .then(() => playSound(url));
       } else {
         playSound(url);
@@ -59,6 +59,19 @@ const SongPlayer = () => {
       playSound(url);
     }
   };
+
+  useEffect(() => {
+    const handlePause = async () => {
+      if (soundObject) {
+        if (isPaused) {
+          await soundObject.playAsync();
+        } else {
+          await soundObject.pauseAsync();
+        }
+      }
+    };
+    handlePause();
+  }, [isPaused]);
 
   useEffect(() => {
     if (!isUrlLoading && songUrl) {
