@@ -12,7 +12,7 @@ import { getSongDetails } from "../redux/actions/songActions";
 import BottomBar from "../components/BottomBar";
 
 const SearchScreen = ({ navigation }) => {
-  const [value, setValue] = useState("taylor swift");
+  const [value, setValue] = useState("coldplay");
   const isLoading = useSelector((state) => state.searchReducer.isLoading);
   const searchResults = useSelector(
     (state) => state.searchReducer.searchResults

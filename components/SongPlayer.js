@@ -51,7 +51,6 @@ const SongPlayer = () => {
         soundObject
           .stopAsync()
           .then(() => soundObject.unloadAsync())
-          // .then(() => dispatch(togglePause(true)))
           .then(() => playSound(url));
       } else {
         playSound(url);
@@ -85,6 +84,9 @@ const SongPlayer = () => {
       dispatch(getSongDetails(suggestedSongs[currentPlayIndex]));
     } else {
       nowPlaying && apiDispatch(getSuggestedSongsList(nowPlaying.videoId));
+    }
+    if (currentPlayIndex === suggestedSongs.length - 1) {
+      dispatch(getSuggestedSongsList(nowPlaying.videoId));
     }
   }, [currentPlayIndex]);
 

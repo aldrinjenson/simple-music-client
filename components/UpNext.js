@@ -3,6 +3,7 @@ import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import DisplaySongs from "./DisplaySongs";
 import { updatePlayIndex } from "../redux/actions/songActions";
+import { getSuggestedSongsList } from "../redux/actions/searchActions";
 
 const UpNext = ({ navigation }) => {
   const { isSuggestedSongsLoading, suggestedSongs } = useSelector(
@@ -10,8 +11,15 @@ const UpNext = ({ navigation }) => {
   );
 
   const dispatch = useDispatch();
+
   const handleClick = (song) => {
-    dispatch(updatePlayIndex(suggestedSongs.indexOf(song)));
+    const songIndex = suggestedSongs.indexOf(song);
+    dispatch(updatePlayIndex(songIndex));
+
+    if (songIndex === suggestedSongs.length - 1) {
+      dispatch(getSuggestedSongsList(song.videoId));
+    }
+
     navigation.pop();
   };
 

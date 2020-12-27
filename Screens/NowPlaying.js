@@ -1,19 +1,11 @@
 import React, { useEffect, useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  Dimensions,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, Text, View, Image, Dimensions } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { milliToTime } from "../global/utils";
 import { MaterialIcons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
 import { updatePlayIndex, togglePause } from "../redux/actions/songActions";
-import { getSuggestedSongsList } from "../redux/actions/searchActions";
 
 const { width } = Dimensions.get("window");
 
@@ -28,8 +20,8 @@ const NowPlaying = ({ navigation }) => {
   const currentPlayIndex = useSelector(
     (state) => state.songReducer.currentPlayIndex
   );
-  const suggestedSongs = useSelector(
-    (state) => state.searchReducer.suggestedSongs
+  const isSuggestedSongsLoading = useSelector(
+    (state) => state.searchReducer.isSuggestedSongsLoading
   );
 
   let imageUrl = nowPlaying?.thumbnails
@@ -51,7 +43,11 @@ const NowPlaying = ({ navigation }) => {
   }, [currentSongThumbnail]);
 
   useEffect(() => {
-    isUrlLoading ? setBottomMsg("Loading Song..") : setBottomMsg("");
+    if (isUrlLoading) {
+      setBottomMsg("Loading Song..");
+    } else {
+      setBottomMsg("");
+    }
   }, [isUrlLoading]);
 
   const handlePause = async () => {
@@ -59,7 +55,6 @@ const NowPlaying = ({ navigation }) => {
   };
 
   useEffect(() => {
-    console.log("in useeffect");
     const sliderInterval = setInterval(() => {
       soundObject?.getStatusAsync().then((status) => {
         if (status.isLoaded) {
@@ -75,9 +70,14 @@ const NowPlaying = ({ navigation }) => {
   }, [soundObject]);
 
   const handleNext = () => {
-    dispatch(updatePlayIndex(currentPlayIndex + 1));
-    if (currentPlayIndex === suggestedSongs.length - 1)
-      dispatch(getSuggestedSongsList(nowPlaying.videoId));
+    if (isSuggestedSongsLoading) {
+      setBottomMsg("Please wait while playlist loads..");
+      setTimeout(() => {
+        setBottomMsg("");
+      }, 1000);
+    } else {
+      dispatch(updatePlayIndex(currentPlayIndex + 1));
+    }
   };
 
   const handlePrevious = () => {
@@ -123,7 +123,13 @@ const NowPlaying = ({ navigation }) => {
         </View>
       </View>
 
-      <View style={{ position: "relative" }}>
+      <View
+        style={
+          {
+            //  position: "relative"
+          }
+        }
+      >
         <Slider
           style={{ width: width - 40, height: 40 }}
           minimumValue={0}
@@ -136,7 +142,7 @@ const NowPlaying = ({ navigation }) => {
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Text>{duration}</Text>
           <Text>
-            {nowPlaying.duration ? milliToTime(nowPlaying.duration) : "0:00"}
+            {nowPlaying.duration ? milliToTime(nowPlaying.duration) : null}
           </Text>
         </View>
       </View>
@@ -152,22 +158,20 @@ const NowPlaying = ({ navigation }) => {
         <View style={{ flexDirection: "row" }}>
           <MaterialIcons
             name="skip-previous"
-            onPress={() => handlePrevious()}
+            onPress={handlePrevious}
             size={70}
             color="grey"
             borderRadius={currentPlayIndex !== 0}
           />
-          <TouchableOpacity onPress={() => handlePause()}>
-            <MaterialIcons
-              name={isPaused ? "pause-circle-filled" : "play-circle-fill"}
-              size={70}
-              color={isUrlLoading ? "grey" : "green"}
-              onPress={handlePause}
-            />
-          </TouchableOpacity>
+          <MaterialIcons
+            name={isPaused ? "pause-circle-filled" : "play-circle-fill"}
+            size={70}
+            color={isUrlLoading ? "grey" : "green"}
+            onPress={handlePause}
+          />
 
           <MaterialIcons
-            onPress={() => handleNext()}
+            onPress={handleNext}
             name="skip-next"
             size={70}
             color="grey"
@@ -205,9 +209,9 @@ const styles = StyleSheet.create({
   artist: {
     fontWeight: "200",
   },
-  endTime: {
-    position: "absolute",
-  },
+  // endTime: {
+  //   position: "absolute",
+  // },
   controlButtons: {
     justifyContent: "space-between",
     flexDirection: "row",
