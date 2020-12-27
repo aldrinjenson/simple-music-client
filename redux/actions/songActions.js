@@ -4,7 +4,7 @@ import { apiDispatch } from "../../global/utils";
 import {
   GET_SONGS_DETAILS,
   GET_SONGS_DETAILS_SUCCESS,
-  INCREMENT_PLAY_INDEX,
+  UPDATE_PLAY_INDEX,
   SET_CURRENT_SONG,
   SET_SOUND_OBJECT,
   TOGGLE_PAUSE,
@@ -36,16 +36,10 @@ export const setCurrentSong = (obj) => {
     payload: obj,
   };
 };
-export const incrementPlayIndex = () => {
+export const updatePlayIndex = (index) => {
   return {
-    type: INCREMENT_PLAY_INDEX,
-    payload: null,
-  };
-};
-export const decrementPlayIndex = () => {
-  return {
-    type: SET_CURRENT_SONG,
-    payload: null,
+    type: UPDATE_PLAY_INDEX,
+    payload: index,
   };
 };
 

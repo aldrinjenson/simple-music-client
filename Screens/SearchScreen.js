@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Button, StyleSheet, Text, View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import SearchBar from "../components/SearchBar";
 import DisplaySongs from "../components/DisplaySongs";
@@ -12,7 +12,7 @@ import { getSongDetails } from "../redux/actions/songActions";
 import BottomBar from "../components/BottomBar";
 
 const SearchScreen = ({ navigation }) => {
-  const [value, setValue] = useState("Believe");
+  const [value, setValue] = useState("taylor swift");
   const isLoading = useSelector((state) => state.searchReducer.isLoading);
   const searchResults = useSelector(
     (state) => state.searchReducer.searchResults

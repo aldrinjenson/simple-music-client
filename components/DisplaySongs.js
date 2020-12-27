@@ -1,5 +1,5 @@
 import React from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { FlatList, Text, View } from "react-native";
 import { useSelector } from "react-redux";
 import SongItem from "./SongItem";
 
@@ -20,7 +20,7 @@ const DisplaySongs = ({ songs, handleClick }) => {
       </View>
     );
   return (
-    <View style={styles.container}>
+    <View style={{ flex: 1 }}>
       <FlatList
         data={songs}
         keyExtractor={(item, index) => index.toString()}
@@ -29,14 +29,12 @@ const DisplaySongs = ({ songs, handleClick }) => {
             ? { uri: `${item.thumbnails[0].url}` }
             : require("../assets/no_preview_image.png");
           return (
-            <View>
-              <SongItem
-                item={item}
-                imageUrl={imageUrl}
-                handleClick={handleClick}
-                shouldHighLight={nowPlaying?.videoId === item.videoId}
-              />
-            </View>
+            <SongItem
+              item={item}
+              imageUrl={imageUrl}
+              handleClick={handleClick}
+              shouldHighLight={nowPlaying?.videoId === item.videoId}
+            />
           );
         }}
       />
@@ -45,9 +43,3 @@ const DisplaySongs = ({ songs, handleClick }) => {
 };
 
 export default DisplaySongs;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});

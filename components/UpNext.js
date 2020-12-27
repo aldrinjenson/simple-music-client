@@ -1,9 +1,8 @@
 import React from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { apiDispatch } from "../global/utils";
 import DisplaySongs from "./DisplaySongs";
-import { getSongDetails, setCurrentSong } from "../redux/actions/songActions";
+import { updatePlayIndex } from "../redux/actions/songActions";
 
 const UpNext = ({ navigation }) => {
   const { isSuggestedSongsLoading, suggestedSongs } = useSelector(
@@ -11,11 +10,11 @@ const UpNext = ({ navigation }) => {
   );
 
   const dispatch = useDispatch();
-
   const handleClick = (song) => {
-    dispatch(getSongDetails(song));
+    dispatch(updatePlayIndex(suggestedSongs.indexOf(song)));
     navigation.pop();
   };
+
   return (
     <View style={{ flex: 1 }}>
       {isSuggestedSongsLoading ? (

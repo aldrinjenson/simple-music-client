@@ -9,13 +9,20 @@ import {
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
-import { togglePause } from "../redux/actions/songActions";
+import { togglePause, updatePlayIndex } from "../redux/actions/songActions";
 
 const BottomBar = ({ navigation }) => {
-  const dispatch = useDispatch();
+  const isUrlLoading = useSelector((state) => state.searchReducer.isUrlLoading);
   const isPaused = useSelector((state) => state.songReducer.isPaused);
   const nowPlaying = useSelector((state) => state.songReducer.nowPlaying);
-  const isUrlLoading = useSelector((state) => state.searchReducer.isUrlLoading);
+  const currentPlayIndex = useSelector(
+    (state) => state.songReducer.currentPlayIndex
+  );
+
+  const dispatch = useDispatch();
+  const handleNext = () => {
+    dispatch(updatePlayIndex(currentPlayIndex + 1));
+  };
 
   return (
     <View style={styles.bottomBar}>
@@ -24,7 +31,6 @@ const BottomBar = ({ navigation }) => {
           flexDirection: "row",
           alignItems: "center",
           flex: 1,
-          backgroundColor: "pink",
         }}
         onPress={() => navigation.navigate("NowPlaying")}
       >
@@ -33,13 +39,7 @@ const BottomBar = ({ navigation }) => {
           source={{ uri: `${nowPlaying.thumbnails[0].url}` }}
         />
         <View style={{ marginLeft: 10 }}>
-          <Text
-            // onLayout={(e) => {
-            //   const { x, y, width, height } = e.nativeEvent.layout;
-            // }}
-            style={styles.title}
-            numberOfLines={1}
-          >
+          <Text style={styles.title} numberOfLines={1}>
             {nowPlaying.name}
           </Text>
           <Text>{nowPlaying.artist.name}</Text>
@@ -56,7 +56,7 @@ const BottomBar = ({ navigation }) => {
         />
 
         <MaterialIcons
-          // onPress={() => handleNext()}
+          onPress={() => handleNext()}
           name="skip-next"
           size={55}
           color="white"

@@ -1,10 +1,8 @@
 import {
-  DECREMENT_PLAY_INDEX,
   GET_SONGS_DETAILS,
   GET_SONGS_DETAILS_SUCCESS,
-  INCREMENT_PLAY_INDEX,
+  UPDATE_PLAY_INDEX,
   SET_CURRENT_SONG,
-  SET_IS_SONG_PLAYING,
   SET_SOUND_OBJECT,
   TOGGLE_PAUSE,
 } from "../constants";
@@ -15,7 +13,6 @@ const initialState = {
   songUrl: null,
   isPaused: false,
   soundObject: null,
-  isSongPlaying: false,
   currentSongThumbnail: null,
   currentPlayIndex: 0,
 };
@@ -49,25 +46,15 @@ const songReducer = (state = initialState, { type, payload = null }) => {
         ...state,
         soundObject: payload,
       };
-    case SET_IS_SONG_PLAYING:
-      return {
-        ...state,
-        isSongPlaying: payload,
-      };
     case SET_CURRENT_SONG:
       return {
         ...state,
         nowPlaying: payload,
       };
-    case INCREMENT_PLAY_INDEX:
+    case UPDATE_PLAY_INDEX:
       return {
         ...state,
-        currentPlayIndex: state.currentPlayIndex + 1,
-      };
-    case DECREMENT_PLAY_INDEX:
-      return {
-        ...state,
-        currentPlayIndex: state.currentPlayIndex - 1,
+        currentPlayIndex: payload,
       };
     default:
       return state;

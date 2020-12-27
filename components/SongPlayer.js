@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { StyleSheet, Button, Text, View } from "react-native";
+import React, { useEffect } from "react";
+import { StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { Audio } from "expo-av";
 import { apiDispatch } from "../global/utils";
-import { SET_IS_SONG_PLAYING, SET_SOUND_OBJECT } from "../redux/constants";
+import { SET_SOUND_OBJECT } from "../redux/constants";
 import {
   getSongDetails,
-  incrementPlayIndex,
+  updatePlayIndex,
+  togglePause,
 } from "../redux/actions/songActions";
 import { getSuggestedSongsList } from "../redux/actions/searchActions";
 
@@ -16,7 +17,6 @@ const SongPlayer = () => {
   const {
     nowPlaying,
     isUrlLoading,
-    isSongPlaying,
     songUrl,
     isPaused,
     currentPlayIndex,
@@ -37,11 +37,11 @@ const SongPlayer = () => {
     soundObj.setOnPlaybackStatusUpdate(async (status) => {
       if (status.didJustFinish) {
         console.log("finished loading");
-        dispatch(incrementPlayIndex());
+        dispatch(updatePlayIndex(currentPlayIndex + 1));
       }
     });
     dispatch(apiDispatch(SET_SOUND_OBJECT, soundObj));
-    dispatch(apiDispatch(SET_IS_SONG_PLAYING, true));
+    dispatch(apiDispatch(togglePause, false));
   };
 
   const playSong = async (url) => {
@@ -50,7 +50,8 @@ const SongPlayer = () => {
       if (playStatus.isPlaying) {
         soundObject
           .stopAsync()
-          // .then(() => soundObject.unloadAsync())
+          .then(() => soundObject.unloadAsync())
+          // .then(() => dispatch(togglePause(true)))
           .then(() => playSound(url));
       } else {
         playSound(url);

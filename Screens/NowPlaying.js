@@ -1,4 +1,3 @@
-import { Audio } from "expo-av";
 import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
@@ -6,7 +5,6 @@ import {
   View,
   Image,
   Dimensions,
-  Button,
   TouchableOpacity,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,24 +12,25 @@ import { milliToTime } from "../global/utils";
 import { MaterialIcons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
-import {
-  incrementPlayIndex,
-  decrementPlayIndex,
-  togglePause,
-} from "../redux/actions/songActions";
+import { updatePlayIndex, togglePause } from "../redux/actions/songActions";
+import { getSuggestedSongsList } from "../redux/actions/searchActions";
 
-const { height, width } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
 const NowPlaying = ({ navigation }) => {
-  const {
-    nowPlaying,
-    soundObject,
-    isPaused,
-    isSongPlaying,
-    isUrlLoading,
-    currentSongThumbnail,
-    currentPlayIndex,
-  } = useSelector((state) => state.songReducer);
+  const nowPlaying = useSelector((state) => state.songReducer.nowPlaying);
+  const soundObject = useSelector((state) => state.songReducer.soundObject);
+  const isPaused = useSelector((state) => state.songReducer.isPaused);
+  const isUrlLoading = useSelector((state) => state.songReducer.isUrlLoading);
+  const currentSongThumbnail = useSelector(
+    (state) => state.songReducer.currentSongThumbnail
+  );
+  const currentPlayIndex = useSelector(
+    (state) => state.songReducer.currentPlayIndex
+  );
+  const suggestedSongs = useSelector(
+    (state) => state.searchReducer.suggestedSongs
+  );
 
   let imageUrl = nowPlaying?.thumbnails
     ? { uri: `${nowPlaying.thumbnails[0].url}` }
@@ -39,6 +38,7 @@ const NowPlaying = ({ navigation }) => {
 
   const dispatch = useDispatch();
   const [sliderValue, setSliderValue] = useState(0);
+  const [bottomMsg, setBottomMsg] = useState("");
   const [imgLink, setImgLink] = useState(imageUrl);
   const [duration, setDuration] = useState("00:00");
 
@@ -50,6 +50,10 @@ const NowPlaying = ({ navigation }) => {
     }
   }, [currentSongThumbnail]);
 
+  useEffect(() => {
+    isUrlLoading ? setBottomMsg("Loading Song..") : setBottomMsg("");
+  }, [isUrlLoading]);
+
   const handlePause = async () => {
     dispatch(togglePause());
   };
@@ -57,13 +61,13 @@ const NowPlaying = ({ navigation }) => {
   useEffect(() => {
     console.log("in useeffect");
     const sliderInterval = setInterval(() => {
-      if (soundObject) {
-        soundObject.getStatusAsync().then((status) => {
+      soundObject?.getStatusAsync().then((status) => {
+        if (status.isLoaded) {
           const { positionMillis } = status;
           setSliderValue(positionMillis / status.durationMillis);
           setDuration(milliToTime(positionMillis));
-        });
-      }
+        }
+      });
     }, 500);
     return () => {
       clearInterval(sliderInterval);
@@ -71,21 +75,30 @@ const NowPlaying = ({ navigation }) => {
   }, [soundObject]);
 
   const handleNext = () => {
-    // if (currentPlayIndex < suggestedSongs?.length)
-    dispatch(incrementPlayIndex());
+    dispatch(updatePlayIndex(currentPlayIndex + 1));
+    if (currentPlayIndex === suggestedSongs.length - 1)
+      dispatch(getSuggestedSongsList(nowPlaying.videoId));
   };
+
   const handlePrevious = () => {
-    if (currentPlayIndex > 1) {
-      dispatch(decrementPlayIndex());
+    console.log("in function");
+    console.log({ currentPlayIndex });
+    if (currentPlayIndex === 0) {
+      setBottomMsg("Currently playing is the first song");
+      setTimeout(() => {
+        setBottomMsg("");
+      }, 1500);
+    } else {
+      dispatch(updatePlayIndex(currentPlayIndex - 1));
     }
   };
 
   const handleSliderChange = async (ratio) => {
-    if (soundObject) {
-      soundObject.getStatusAsync().then((status) => {
+    soundObject.getStatusAsync().then((status) => {
+      if (status.isLoaded) {
         soundObject.setPositionAsync(status.durationMillis * ratio);
-      });
-    }
+      }
+    });
   };
 
   return (
@@ -110,71 +123,67 @@ const NowPlaying = ({ navigation }) => {
         </View>
       </View>
 
-      <View>
-        <View style={{ position: "relative" }}>
-          <Slider
-            style={{ width: width - 40, height: 40 }}
-            minimumValue={0}
-            maximumValue={1}
-            minimumTrackTintColor="#FFFFFF"
-            maximumTrackTintColor="#000000"
-            value={sliderValue}
-            onValueChange={handleSliderChange}
-          />
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
-          >
-            <Text style={{}}>{duration}</Text>
-            <Text style={{}}>{milliToTime(nowPlaying.duration)}</Text>
-          </View>
+      <View style={{ position: "relative" }}>
+        <Slider
+          style={{ width: width - 40, height: 40 }}
+          minimumValue={0}
+          maximumValue={1}
+          minimumTrackTintColor="#FFFFFF"
+          maximumTrackTintColor="#000000"
+          value={sliderValue}
+          onValueChange={handleSliderChange}
+        />
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text>{duration}</Text>
+          <Text>
+            {nowPlaying.duration ? milliToTime(nowPlaying.duration) : "0:00"}
+          </Text>
         </View>
+      </View>
 
-        <View style={styles.controlButtons}>
-          <MaterialCommunityIcons
-            name={"repeat" || "repeat-off" || "repeat-once"}
-            size={30}
-            color="black"
+      <View style={styles.controlButtons}>
+        <MaterialCommunityIcons
+          name={"repeat" || "repeat-off" || "repeat-once"}
+          size={30}
+          color="black"
+          onPress={() => handlePrevious()}
+        />
+
+        <View style={{ flexDirection: "row" }}>
+          <MaterialIcons
+            name="skip-previous"
             onPress={() => handlePrevious()}
+            size={70}
+            color="grey"
+            borderRadius={currentPlayIndex !== 0}
           />
-
-          <View style={{ flexDirection: "row" }}>
+          <TouchableOpacity onPress={() => handlePause()}>
             <MaterialIcons
-              name="skip-previous"
-              onPress={() => handlePrevious()}
+              name={isPaused ? "pause-circle-filled" : "play-circle-fill"}
               size={70}
-              color="grey"
-              borderRadius={currentPlayIndex !== 0}
+              color={isUrlLoading ? "grey" : "green"}
+              onPress={handlePause}
             />
-            <TouchableOpacity onPress={() => handlePause()}>
-              <MaterialIcons
-                name={isPaused ? "play-circle-fill" : "pause-circle-filled"}
-                size={70}
-                color={isUrlLoading ? "grey" : "green"}
-                onPress={handlePause}
-              />
-            </TouchableOpacity>
-
-            <MaterialIcons
-              onPress={() => handleNext()}
-              name="skip-next"
-              size={70}
-              color="grey"
-            />
-          </View>
+          </TouchableOpacity>
 
           <MaterialIcons
-            name="queue-music"
-            size={30}
-            color="black"
-            onPress={() => navigation.navigate("UpNext")}
+            onPress={() => handleNext()}
+            name="skip-next"
+            size={70}
+            color="grey"
           />
         </View>
-        {isUrlLoading && (
-          <Text style={{ textAlign: "center", fontSize: 14, marginBottom: 10 }}>
-            Bufferring Song...
-          </Text>
-        )}
+
+        <MaterialIcons
+          name="queue-music"
+          size={30}
+          color="black"
+          onPress={() => navigation.navigate("UpNext")}
+        />
       </View>
+      <Text style={{ textAlign: "center", fontSize: 14, marginBottom: 10 }}>
+        {bottomMsg}
+      </Text>
     </View>
   );
 };
@@ -189,6 +198,9 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: "400",
     fontSize: 20,
+    flexWrap: "wrap",
+    textAlign: "center",
+    marginBottom: 10,
   },
   artist: {
     fontWeight: "200",
@@ -202,5 +214,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 15,
   },
-  fab: {},
 });

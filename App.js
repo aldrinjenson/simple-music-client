@@ -39,8 +39,6 @@ const App = () => {
               name="NowPlaying"
               component={NowPlaying}
               options={{
-                gestureEnabled: true,
-                // cardStyleInterpolator:CardStyleInterpolators.
                 headerBackImage: () => (
                   <MaterialCommunityIcons
                     name="chevron-down"
