@@ -5,6 +5,7 @@ import SearchBar from "../components/SearchBar";
 import DisplaySongs from "../components/DisplaySongs";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  addSongToSuggestions,
   getSongsList,
   getSuggestedSongsList,
 } from "../redux/actions/searchActions";
@@ -12,12 +13,15 @@ import { getSongDetails } from "../redux/actions/songActions";
 import BottomBar from "../components/BottomBar";
 
 const SearchScreen = ({ navigation }) => {
-  const [value, setValue] = useState("coldplay");
+  const [value, setValue] = useState("taylor swift");
   const isLoading = useSelector((state) => state.searchReducer.isLoading);
   const searchResults = useSelector(
     (state) => state.searchReducer.searchResults
   );
   const nowPlaying = useSelector((state) => state.songReducer.nowPlaying);
+  const suggestedSongs = useSelector(
+    (state) => state.searchReducer.suggestedSongs
+  );
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -28,9 +32,14 @@ const SearchScreen = ({ navigation }) => {
 
   const handleClick = (song) => {
     dispatch(getSongDetails(song));
-    console.log("dispatching, id = " + song.videoId);
     dispatch(getSuggestedSongsList(song.videoId));
     navigation.navigate("NowPlaying");
+  };
+
+  const handleSecondary = (song) => {
+    if (song.videoId !== nowPlaying.videoId && !suggestedSongs.includes(song)) {
+      dispatch(addSongToSuggestions(song));
+    }
   };
 
   return (
@@ -58,7 +67,12 @@ const SearchScreen = ({ navigation }) => {
             <Text style={{ alignSelf: "center" }}>Loading...</Text>
           </View>
         ) : (
-          <DisplaySongs songs={searchResults} handleClick={handleClick} />
+          <DisplaySongs
+            iconName="playlist-add"
+            songs={searchResults}
+            handleClick={handleClick}
+            secondaryAction={handleSecondary}
+          />
         )}
       </View>
       {nowPlaying && <BottomBar navigation={navigation} />}

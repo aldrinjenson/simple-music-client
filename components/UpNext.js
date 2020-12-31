@@ -3,7 +3,10 @@ import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import DisplaySongs from "./DisplaySongs";
 import { updatePlayIndex } from "../redux/actions/songActions";
-import { getSuggestedSongsList } from "../redux/actions/searchActions";
+import {
+  getSuggestedSongsList,
+  removeSongFromSuggestions,
+} from "../redux/actions/searchActions";
 
 const UpNext = ({ navigation }) => {
   const { isSuggestedSongsLoading, suggestedSongs } = useSelector(
@@ -23,6 +26,11 @@ const UpNext = ({ navigation }) => {
     navigation.pop();
   };
 
+  const handleSecondary = (song) => {
+    console.log("deleting" + song.name);
+    dispatch(removeSongFromSuggestions(song));
+  };
+
   return (
     <View style={{ flex: 1 }}>
       {isSuggestedSongsLoading ? (
@@ -38,7 +46,12 @@ const UpNext = ({ navigation }) => {
           </Text>
         </View>
       ) : (
-        <DisplaySongs songs={suggestedSongs} handleClick={handleClick} />
+        <DisplaySongs
+          iconName="delete"
+          songs={suggestedSongs}
+          handleClick={handleClick}
+          secondaryAction={handleSecondary}
+        />
       )}
     </View>
   );

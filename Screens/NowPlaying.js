@@ -71,18 +71,16 @@ const NowPlaying = ({ navigation }) => {
 
   const handleNext = () => {
     if (isSuggestedSongsLoading) {
-      setBottomMsg("Please wait while playlist loads..");
+      setBottomMsg("Please wait while the playlist loads..");
       setTimeout(() => {
         setBottomMsg("");
-      }, 1000);
+      }, 1500);
     } else {
       dispatch(updatePlayIndex(currentPlayIndex + 1));
     }
   };
 
   const handlePrevious = () => {
-    console.log("in function");
-    console.log({ currentPlayIndex });
     if (currentPlayIndex === 0) {
       setBottomMsg("Currently playing is the first song");
       setTimeout(() => {
@@ -102,93 +100,89 @@ const NowPlaying = ({ navigation }) => {
   };
 
   return (
-    <View
-      style={{
-        flex: 1,
-        paddingHorizontal: 20,
-        backgroundColor: "#2C2C2CAA",
-        justifyContent: "space-evenly",
-      }}
-    >
+    nowPlaying && (
       <View
         style={{
-          alignItems: "center",
-          marginVertical: 70,
+          flex: 1,
+          paddingHorizontal: 20,
+          backgroundColor: "#2C2C2CAA",
+          justifyContent: "space-evenly",
         }}
       >
-        <Image style={styles.thumbnail} source={imgLink} />
-        <View style={{ alignItems: "center", marginTop: 30 }}>
-          <Text style={styles.title}>{nowPlaying?.name}</Text>
-          <Text style={styles.artist}>{nowPlaying?.artist.name}</Text>
-        </View>
-      </View>
-
-      <View
-        style={
-          {
-            //  position: "relative"
-          }
-        }
-      >
-        <Slider
-          style={{ width: width - 40, height: 40 }}
-          minimumValue={0}
-          maximumValue={1}
-          minimumTrackTintColor="#FFFFFF"
-          maximumTrackTintColor="#000000"
-          value={sliderValue}
-          onValueChange={handleSliderChange}
-        />
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text>{duration}</Text>
-          <Text>
-            {nowPlaying.duration ? milliToTime(nowPlaying.duration) : null}
-          </Text>
-        </View>
-      </View>
-
-      <View style={styles.controlButtons}>
-        <MaterialCommunityIcons
-          name={"repeat" || "repeat-off" || "repeat-once"}
-          size={30}
-          color="black"
-          onPress={() => handlePrevious()}
-        />
-
-        <View style={{ flexDirection: "row" }}>
-          <MaterialIcons
-            name="skip-previous"
-            onPress={handlePrevious}
-            size={70}
-            color="grey"
-            borderRadius={currentPlayIndex !== 0}
-          />
-          <MaterialIcons
-            name={isPaused ? "pause-circle-filled" : "play-circle-fill"}
-            size={70}
-            color={isUrlLoading ? "grey" : "green"}
-            onPress={handlePause}
-          />
-
-          <MaterialIcons
-            onPress={handleNext}
-            name="skip-next"
-            size={70}
-            color="grey"
-          />
+        <View
+          style={{
+            alignItems: "center",
+            marginVertical: 70,
+          }}
+        >
+          <Image style={styles.thumbnail} source={imgLink} />
+          <View style={{ alignItems: "center", marginTop: 30 }}>
+            <Text style={styles.title}>{nowPlaying.name}</Text>
+            <Text style={{ fontWeight: "200" }}>{nowPlaying.artist.name}</Text>
+          </View>
         </View>
 
-        <MaterialIcons
-          name="queue-music"
-          size={30}
-          color="black"
-          onPress={() => navigation.navigate("UpNext")}
-        />
+        <View>
+          <Slider
+            style={{ width: width - 40, height: 40 }}
+            minimumValue={0}
+            maximumValue={1}
+            minimumTrackTintColor="#FFFFFF"
+            maximumTrackTintColor="#000000"
+            value={sliderValue}
+            onValueChange={handleSliderChange}
+          />
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <Text>{duration}</Text>
+            <Text>{milliToTime(nowPlaying.duration)}</Text>
+          </View>
+        </View>
+
+        <View style={styles.controlButtons}>
+          <MaterialCommunityIcons
+            name={"repeat" || "repeat-off" || "repeat-once"}
+            size={30}
+            color="black"
+            onPress={() => handlePrevious()}
+          />
+
+          <View style={{ flexDirection: "row" }}>
+            <MaterialIcons
+              name="skip-previous"
+              onPress={handlePrevious}
+              size={70}
+              color={isUrlLoading ? "grey" : "black"}
+              borderRadius={currentPlayIndex !== 0}
+            />
+            <MaterialIcons
+              name={isPaused ? "play-circle-fill" : "pause-circle-filled"}
+              size={70}
+              color={isUrlLoading ? "grey" : "green"}
+              onPress={handlePause}
+            />
+
+            <MaterialIcons
+              onPress={handleNext}
+              name="skip-next"
+              size={70}
+              color={isUrlLoading ? "grey" : "black"}
+            />
+          </View>
+
+          <MaterialIcons
+            name="queue-music"
+            size={30}
+            color="black"
+            onPress={() => navigation.navigate("UpNext")}
+          />
+        </View>
+        <Text style={{ textAlign: "center", fontSize: 14, marginBottom: 10 }}>
+          {bottomMsg}
+        </Text>
       </View>
-      <Text style={{ textAlign: "center", fontSize: 14, marginBottom: 10 }}>
-        {bottomMsg}
-      </Text>
-    </View>
+    )
   );
 };
 
@@ -206,12 +200,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 10,
   },
-  artist: {
-    fontWeight: "200",
-  },
-  // endTime: {
-  //   position: "absolute",
-  // },
   controlButtons: {
     justifyContent: "space-between",
     flexDirection: "row",

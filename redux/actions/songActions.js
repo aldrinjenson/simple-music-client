@@ -1,6 +1,6 @@
 import axios from "axios";
 import { apiUrl } from "../../env";
-import { apiDispatch } from "../../global/utils";
+import { apiDispatch, hanleError } from "../../global/utils";
 import {
   GET_SONGS_DETAILS,
   GET_SONGS_DETAILS_SUCCESS,
@@ -14,11 +14,11 @@ export const getSongDetails = (song) => {
     dispatch(apiDispatch(GET_SONGS_DETAILS, song));
     const id = song.videoId;
     axios
-      .get(`${apiUrl}/song?videoId=${id}`)
+      .get(`${apiUrl}/song/${id}`)
       .then((res) => {
         dispatch(apiDispatch(GET_SONGS_DETAILS_SUCCESS, res.data));
       })
-      .catch((err) => console.log("error" + err));
+      .catch(hanleError);
   };
 };
 

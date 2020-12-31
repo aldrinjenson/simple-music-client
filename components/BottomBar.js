@@ -1,4 +1,5 @@
 import React from "react";
+import TextTicker from "react-native-text-ticker";
 import {
   Dimensions,
   Image,
@@ -30,7 +31,8 @@ const BottomBar = ({ navigation }) => {
         style={{
           flexDirection: "row",
           alignItems: "center",
-          flex: 1,
+          flexGrow: 1,
+          maxWidth: "80%",
         }}
         onPress={() => navigation.navigate("NowPlaying")}
       >
@@ -38,18 +40,22 @@ const BottomBar = ({ navigation }) => {
           style={styles.tabImage}
           source={{ uri: `${nowPlaying.thumbnails[0].url}` }}
         />
-        <View style={{ marginLeft: 10 }}>
-          <Text style={styles.title} numberOfLines={1}>
+        <View style={{ marginLeft: 10, width: "70%" }}>
+          <TextTicker
+            style={{ fontSize: 18 }}
+            duration={13000}
+            marqueeDelay={1000}
+          >
             {nowPlaying.name}
-          </Text>
+          </TextTicker>
           <Text>{nowPlaying.artist.name}</Text>
         </View>
       </TouchableOpacity>
 
       <View style={{ flexDirection: "row" }}>
         <MaterialIcons
-          name={isPaused ? "pause-circle-filled" : "play-circle-fill"}
-          size={55}
+          name={isPaused ? "play-circle-fill" : "pause-circle-filled"}
+          size={45}
           color={isUrlLoading ? "grey" : "green"}
           color="green"
           onPress={() => dispatch(togglePause())}
@@ -58,7 +64,7 @@ const BottomBar = ({ navigation }) => {
         <MaterialIcons
           onPress={() => handleNext()}
           name="skip-next"
-          size={55}
+          size={45}
           color="white"
         />
       </View>
@@ -70,15 +76,15 @@ export default BottomBar;
 
 const styles = StyleSheet.create({
   tabImage: {
-    width: 77,
-    height: 77,
+    width: 60,
+    height: 60,
   },
   bottomBar: {
+    minHeight: "9%",
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "grey",
     paddingHorizontal: 10,
     justifyContent: "space-between",
   },
-  title: { fontSize: 18, maxWidth: "80%" },
 });

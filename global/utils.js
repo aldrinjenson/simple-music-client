@@ -13,7 +13,6 @@ export const convertSongFormat = (songs) => {
   const newSongList = songs.map((song) => {
     return {
       name: song.title,
-      // thumbnails: [song.thumbnails[song.thumbnails.length - 1]],
       thumbnails: song.thumbnails,
       artist: { name: song.author?.name.slice(0, -7) },
       duration: +song.lengthSeconds * 1000,
@@ -21,4 +20,9 @@ export const convertSongFormat = (songs) => {
     };
   });
   return newSongList;
+};
+
+export const hanleError = (err) => {
+  console.log("error in response");
+  console.error(err);
 };

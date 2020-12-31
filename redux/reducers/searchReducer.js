@@ -1,10 +1,10 @@
 import {
   GET_SONGS_LIST,
   GET_SONGS_LIST_SUCCESS,
-  GET_DATA_ERROR,
-  GET_ALBUM_LIST_SUCCESS,
   GET_SUGGESTED_SONGS_SUCCESS,
   GET_SUGGESTED_SONGS,
+  REMOVE_SONG_FROM_SUGGESTIONS,
+  ADD_SONG_TO_SUGGESTIONS,
 } from "../constants";
 
 const initialState = {
@@ -35,9 +35,19 @@ const searchReducer = (state = initialState, { type, payload = null }) => {
         playlist: payload,
         isSuggestedSongsLoading: false,
       };
-    case GET_DATA_ERROR:
-      console.error({ payload });
-      return { ...state, searchResults: [], isLoading: false, error: payload };
+    case REMOVE_SONG_FROM_SUGGESTIONS:
+      return {
+        ...state,
+        suggestedSongs: state.suggestedSongs.filter(
+          (song) => song.videoId !== payload.videoId
+        ),
+      };
+
+    case ADD_SONG_TO_SUGGESTIONS:
+      return {
+        ...state,
+        suggestedSongs: [...state.suggestedSongs, payload],
+      };
 
     default:
       return state;

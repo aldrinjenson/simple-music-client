@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { Audio } from "expo-av";
+
 import { apiDispatch } from "../global/utils";
 import { SET_SOUND_OBJECT } from "../redux/constants";
 import {
@@ -64,9 +65,9 @@ const SongPlayer = () => {
     const handlePause = async () => {
       if (soundObject) {
         if (isPaused) {
-          await soundObject.playAsync();
-        } else {
           await soundObject.pauseAsync();
+        } else {
+          await soundObject.playAsync();
         }
       }
     };
@@ -94,5 +95,3 @@ const SongPlayer = () => {
 };
 
 export default SongPlayer;
-
-const styles = StyleSheet.create({});

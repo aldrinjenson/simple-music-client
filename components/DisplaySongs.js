@@ -3,7 +3,7 @@ import { FlatList, Text, View } from "react-native";
 import { useSelector } from "react-redux";
 import SongItem from "./SongItem";
 
-const DisplaySongs = ({ songs, handleClick }) => {
+const DisplaySongs = ({ songs, handleClick, secondaryAction, iconName }) => {
   const nowPlaying = useSelector((state) => state.songReducer.nowPlaying);
   if (!songs)
     return (
@@ -25,15 +25,13 @@ const DisplaySongs = ({ songs, handleClick }) => {
         data={songs}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => {
-          let imageUrl = item.thumbnails
-            ? { uri: `${item.thumbnails[0].url}` }
-            : require("../assets/no_preview_image.png");
           return (
             <SongItem
+              iconName={iconName}
               item={item}
-              imageUrl={imageUrl}
               handleClick={handleClick}
               shouldHighLight={nowPlaying?.videoId === item.videoId}
+              secondaryAction={secondaryAction}
             />
           );
         }}

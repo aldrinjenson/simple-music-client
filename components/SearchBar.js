@@ -12,10 +12,12 @@ const SearchBar = ({ value, setValue, placeholder }) => {
   return (
     <View style={styles.searchBar}>
       <TextInput
+        style={{ flexGrow: 1, marginLeft: 20 }}
         placeholder={placeholder}
         value={query}
         onKeyPress={(key) => (key.key === "Enter" ? handleSubmit() : null)}
         onChangeText={(e) => setQuery(e)}
+        onSubmitEditing={handleSubmit}
       />
 
       <MaterialIcons
@@ -38,8 +40,8 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     width: "95%",
     justifyContent: "space-around",
-    paddingVertical: 5,
     marginVertical: 20,
+    paddingVertical: 10,
     alignSelf: "center",
   },
   icon: {
