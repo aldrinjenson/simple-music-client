@@ -11,9 +11,11 @@ import {
 } from "../redux/actions/searchActions";
 import { getSongDetails } from "../redux/actions/songActions";
 import BottomBar from "../components/BottomBar";
+import SnackBar from "react-native-snackbar-component";
 
 const SearchScreen = ({ navigation }) => {
   const [value, setValue] = useState("taylor swift");
+  const [msg, setMsg] = useState("");
   const isLoading = useSelector((state) => state.searchReducer.isLoading);
   const searchResults = useSelector(
     (state) => state.searchReducer.searchResults
@@ -39,6 +41,10 @@ const SearchScreen = ({ navigation }) => {
   const handleSecondary = (song) => {
     if (song.videoId !== nowPlaying.videoId && !suggestedSongs.includes(song)) {
       dispatch(addSongToSuggestions(song));
+      setMsg("Added to Queue");
+      setTimeout(() => {
+        setMsg("");
+      }, 1700);
     }
   };
 
@@ -68,12 +74,13 @@ const SearchScreen = ({ navigation }) => {
           </View>
         ) : (
           <DisplaySongs
-            iconName="playlist-add"
+            iconName={suggestedSongs.length ? "playlist-add" : ""}
             songs={searchResults}
             handleClick={handleClick}
             secondaryAction={handleSecondary}
           />
         )}
+        {msg.length !== 0 && <Text style={{ alignSelf: "center" }}>{msg}</Text>}
       </View>
       {nowPlaying && <BottomBar navigation={navigation} />}
     </View>

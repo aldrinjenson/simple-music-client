@@ -1,5 +1,5 @@
 import axios from "axios";
-import { apiUrl } from "../../env";
+import { apiUrl } from "../../config";
 import { apiDispatch, convertSongFormat, hanleError } from "../../global/utils";
 import {
   GET_SONGS_LIST,

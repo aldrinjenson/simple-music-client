@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import DisplaySongs from "./DisplaySongs";
@@ -7,11 +7,13 @@ import {
   getSuggestedSongsList,
   removeSongFromSuggestions,
 } from "../redux/actions/searchActions";
+import BottomBar from "./BottomBar";
 
 const UpNext = ({ navigation }) => {
   const { isSuggestedSongsLoading, suggestedSongs } = useSelector(
     (state) => state.searchReducer
   );
+  const [msg, setMsg] = useState("");
 
   const dispatch = useDispatch();
 
@@ -29,6 +31,10 @@ const UpNext = ({ navigation }) => {
   const handleSecondary = (song) => {
     console.log("deleting" + song.name);
     dispatch(removeSongFromSuggestions(song));
+    setMsg("Removed from playlist");
+    setTimeout(() => {
+      setMsg("");
+    }, 1700);
   };
 
   return (
@@ -46,12 +52,35 @@ const UpNext = ({ navigation }) => {
           </Text>
         </View>
       ) : (
-        <DisplaySongs
-          iconName="delete"
-          songs={suggestedSongs}
-          handleClick={handleClick}
-          secondaryAction={handleSecondary}
-        />
+        <View style={{ flex: 1 }}>
+          <DisplaySongs
+            iconName="delete"
+            songs={suggestedSongs}
+            handleClick={handleClick}
+            secondaryAction={handleSecondary}
+          />
+
+          {msg.length !== 0 && (
+            <View
+              style={{
+                backgroundColor: "grey",
+                position: "absolute",
+                bottom: 25,
+                width: "100%",
+              }}
+            >
+              <Text
+                style={{
+                  alignSelf: "center",
+                  marginVertical: 20,
+                  fontSize: 16,
+                }}
+              >
+                {msg}
+              </Text>
+            </View>
+          )}
+        </View>
       )}
     </View>
   );
