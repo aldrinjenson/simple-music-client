@@ -11,10 +11,9 @@ import {
 } from "../redux/actions/searchActions";
 import { getSongDetails } from "../redux/actions/songActions";
 import BottomBar from "../components/BottomBar";
-import SnackBar from "react-native-snackbar-component";
 
 const SearchScreen = ({ navigation }) => {
-  const [value, setValue] = useState("taylor swift");
+  const [value, setValue] = useState("fearless");
   const [msg, setMsg] = useState("");
   const isLoading = useSelector((state) => state.searchReducer.isLoading);
   const searchResults = useSelector(
@@ -33,6 +32,7 @@ const SearchScreen = ({ navigation }) => {
   }, [value]);
 
   const handleClick = (song) => {
+    console.log("VideoId = " + song.videoId);
     dispatch(getSongDetails(song));
     dispatch(getSuggestedSongsList(song.videoId));
     navigation.navigate("NowPlaying");
@@ -80,7 +80,26 @@ const SearchScreen = ({ navigation }) => {
             secondaryAction={handleSecondary}
           />
         )}
-        {msg.length !== 0 && <Text style={{ alignSelf: "center" }}>{msg}</Text>}
+        {msg.length !== 0 && (
+          <View
+            style={{
+              backgroundColor: "grey",
+              position: "absolute",
+              bottom: 25,
+              width: "100%",
+            }}
+          >
+            <Text
+              style={{
+                alignSelf: "center",
+                marginVertical: 20,
+                fontSize: 16,
+              }}
+            >
+              {msg}
+            </Text>
+          </View>
+        )}
       </View>
       {nowPlaying && <BottomBar navigation={navigation} />}
     </View>

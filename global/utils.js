@@ -9,7 +9,7 @@ export const milliToTime = (ms) => {
   return new Date(ms).toISOString().slice(14, -5);
 };
 
-export const convertSongFormat = (songs) => {
+export const convertSongFormat = (songs = []) => {
   const newSongList = songs.map((song) => {
     return {
       name: song.title,
