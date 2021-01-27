@@ -6,7 +6,6 @@ import { globalStyles } from "../global/globalStyles";
 
 const DisplayAlbums = () => {
   const albums = useSelector((state) => state.searchReducer.albums);
-  // console.log(albums);
   return (
     <View style={styles.container}>
       <FlatList
@@ -15,7 +14,8 @@ const DisplayAlbums = () => {
         renderItem={({ item }) => {
           let imageUrl = item.thumbnails?.length
             ? { uri: `${item.thumbnails[0].url}` }
-            : require("../assets/no_preview_image.png");
+            : // eslint-disable-next-line no-undef
+              require("../assets/no_preview_image.png");
           return (
             <TouchableOpacity onPress={() => {}}>
               <View style={styles.horizonatalCard}>

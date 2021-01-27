@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import SearchBar from "../components/SearchBar";
 import DisplaySongs from "../components/DisplaySongs";
@@ -9,11 +9,11 @@ import {
   getSongsList,
   getSuggestedSongsList,
 } from "../redux/actions/searchActions";
-import { getSongDetails } from "../redux/actions/songActions";
+import { getSongDetails, updatePlayIndex } from "../redux/actions/songActions";
 import BottomBar from "../components/BottomBar";
 
 const SearchScreen = ({ navigation }) => {
-  const [value, setValue] = useState("fearless");
+  const [value, setValue] = useState("Frozen");
   const [msg, setMsg] = useState("");
   const isLoading = useSelector((state) => state.searchReducer.isLoading);
   const searchResults = useSelector(
@@ -32,9 +32,9 @@ const SearchScreen = ({ navigation }) => {
   }, [value]);
 
   const handleClick = (song) => {
-    console.log("VideoId = " + song.videoId);
     dispatch(getSongDetails(song));
     dispatch(getSuggestedSongsList(song.videoId));
+    dispatch(updatePlayIndex(0));
     navigation.navigate("NowPlaying");
   };
 

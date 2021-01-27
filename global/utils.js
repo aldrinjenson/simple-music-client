@@ -10,15 +10,13 @@ export const milliToTime = (ms) => {
 };
 
 export const convertSongFormat = (songs = []) => {
-  const newSongList = songs.map((song) => {
-    return {
-      name: song.title,
-      thumbnails: song.thumbnails,
-      artist: { name: song.author?.name.slice(0, -7) },
-      duration: +song.lengthSeconds * 1000,
-      videoId: song.videoId,
-    };
-  });
+  const newSongList = songs.map((song) => ({
+    name: song.title,
+    thumbnails: song.thumbnails,
+    artist: { name: song.author?.name.slice(0, -7) },
+    duration: +song.lengthSeconds * 1000,
+    videoId: song.videoId,
+  }));
   return newSongList;
 };
 

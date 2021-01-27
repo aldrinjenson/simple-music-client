@@ -1,9 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, View, TextInput, Keyboard } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
 const SearchBar = ({ value, setValue, placeholder }) => {
   const [query, setQuery] = useState(value);
+
+  useEffect(() => {
+    console.log("search bar re-rendering");
+    // see if useCallBack is needed in App.js
+  }, []);
 
   const handleSubmit = () => {
     if (query) setValue(query);

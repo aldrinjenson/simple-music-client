@@ -28,13 +28,16 @@
     "react-native-snackbar": "^2.3.1",
     "react-native-text-ticker": "^1.10.0",
     "react-native-web": "~0.13.12",
+    "react-native-ytdl": "^4.2.1",
     "react-redux": "^7.2.2",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "ytsr": "^3.2.1"
   },
   "devDependencies": {
-    "@babel/core": "~7.9.0"
+    "@babel/core": "~7.9.0",
+    "eslint": "^7.18.0",
+    "eslint-plugin-react": "^7.22.0"
   },
   "private": true
 }

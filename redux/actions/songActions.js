@@ -1,6 +1,5 @@
-import axios from "axios";
-import { apiUrl } from "../../config";
 import { apiDispatch, hanleError } from "../../global/utils";
+import ytdl from "react-native-ytdl";
 import {
   GET_SONGS_DETAILS,
   GET_SONGS_DETAILS_SUCCESS,
@@ -9,15 +8,26 @@ import {
   TOGGLE_PAUSE,
 } from "../constants";
 
+const getSongUrlAndThumb = async (videoID) => {
+  console.log({ videoID });
+  let info = await ytdl.getInfo(videoID);
+  let audioFormats = ytdl.filterFormats(info.formats, "audioonly");
+  const {
+    videoDetails: { thumbnails },
+  } = info;
+  console.log("getting song url");
+  return {
+    url: audioFormats[0]?.url,
+    thumbnail: thumbnails[thumbnails.length - 2].url,
+  };
+};
+
 export const getSongDetails = (song) => {
   return (dispatch) => {
     dispatch(apiDispatch(GET_SONGS_DETAILS, song));
     const id = song.videoId;
-    axios
-      .get(`${apiUrl}/song/${id}`)
-      .then((res) => {
-        dispatch(apiDispatch(GET_SONGS_DETAILS_SUCCESS, res.data));
-      })
+    getSongUrlAndThumb(id)
+      .then((res) => dispatch(apiDispatch(GET_SONGS_DETAILS_SUCCESS, res)))
       .catch(hanleError);
   };
 };

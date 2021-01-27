@@ -1,13 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import TextTicker from "react-native-text-ticker";
-import {
-  Dimensions,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { togglePause, updatePlayIndex } from "../redux/actions/songActions";
@@ -19,6 +12,10 @@ const BottomBar = ({ navigation }) => {
   const currentPlayIndex = useSelector(
     (state) => state.songReducer.currentPlayIndex
   );
+  useEffect(() => {
+    console.log("bottomBar re-rendering");
+    // see if useMemo is needed in App.js
+  }, []);
 
   const dispatch = useDispatch();
   const handleNext = () => {
