@@ -1,4 +1,5 @@
 import axios from "axios";
+import ytdl from "react-native-ytdl";
 import { apiUrl } from "../../config";
 import { apiDispatch, convertSongFormat, hanleError } from "../../global/utils";
 import {
@@ -9,6 +10,14 @@ import {
   REMOVE_SONG_FROM_SUGGESTIONS,
   ADD_SONG_TO_SUGGESTIONS,
 } from "../constants";
+
+const getSongFromIds = async (songIds) => {
+  let promises = [];
+  songIds.forEach((id) => promises.push(ytdl.getBasicInfo(id)));
+  let suggestedSongInfos = await Promise.all(promises);
+  const videoDetails = suggestedSongInfos.map((info) => info.videoDetails);
+  return videoDetails;
+};
 
 export const getSongsList = (query) => {
   return (dispatch) => {
@@ -28,8 +37,11 @@ export const getSuggestedSongsList = (videoId) => {
     axios
       .get(`${apiUrl}/suggested/${videoId}`)
       .then((res) => {
-        dispatch(
-          apiDispatch(GET_SUGGESTED_SONGS_SUCCESS, convertSongFormat(res.data))
+        const songIds = res.data;
+        getSongFromIds(songIds).then((songs) =>
+          dispatch(
+            apiDispatch(GET_SUGGESTED_SONGS_SUCCESS, convertSongFormat(songs))
+          )
         );
       })
       .catch(hanleError);

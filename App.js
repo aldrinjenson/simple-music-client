@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { Provider as PaperProvider } from "react-native-paper";
@@ -43,6 +44,7 @@ const App = () => {
                     color="black"
                   />
                 ),
+                // headerShown: false,
               }}
             />
             <Stack.Screen

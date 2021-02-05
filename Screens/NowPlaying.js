@@ -145,7 +145,7 @@ const NowPlaying = ({ navigation }) => {
             name={"repeat" || "repeat-off" || "repeat-once"}
             size={30}
             color="black"
-            onPress={() => handlePrevious()}
+            onPress={() => {}}
           />
 
           <View style={{ flexDirection: "row" }}>

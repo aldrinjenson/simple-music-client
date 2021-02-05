@@ -4,6 +4,8 @@ import { ActivityIndicator } from "react-native-paper";
 import SearchBar from "../components/SearchBar";
 import DisplaySongs from "../components/DisplaySongs";
 import { useDispatch, useSelector } from "react-redux";
+import Toast from "react-native-simple-toast";
+
 import {
   addSongToSuggestions,
   getSongsList,
@@ -14,7 +16,6 @@ import BottomBar from "../components/BottomBar";
 
 const SearchScreen = ({ navigation }) => {
   const [value, setValue] = useState("Frozen");
-  const [msg, setMsg] = useState("");
   const isLoading = useSelector((state) => state.searchReducer.isLoading);
   const searchResults = useSelector(
     (state) => state.searchReducer.searchResults
@@ -41,10 +42,7 @@ const SearchScreen = ({ navigation }) => {
   const handleSecondary = (song) => {
     if (song.videoId !== nowPlaying.videoId && !suggestedSongs.includes(song)) {
       dispatch(addSongToSuggestions(song));
-      setMsg("Added to Queue");
-      setTimeout(() => {
-        setMsg("");
-      }, 1700);
+      Toast.show("Added to Queue");
     }
   };
 
@@ -79,26 +77,6 @@ const SearchScreen = ({ navigation }) => {
             handleClick={handleClick}
             secondaryAction={handleSecondary}
           />
-        )}
-        {msg.length !== 0 && (
-          <View
-            style={{
-              backgroundColor: "grey",
-              position: "absolute",
-              bottom: 25,
-              width: "100%",
-            }}
-          >
-            <Text
-              style={{
-                alignSelf: "center",
-                marginVertical: 20,
-                fontSize: 16,
-              }}
-            >
-              {msg}
-            </Text>
-          </View>
         )}
       </View>
       {nowPlaying && <BottomBar navigation={navigation} />}
